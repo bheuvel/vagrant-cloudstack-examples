@@ -28,10 +28,8 @@ Vagrant.configure("2") do |c|
 #    ]
   end
 
-  # Linux machines
-  (1...3).each do |vmx|
-    c.vm.define "linacs-#{vmx}" do |config|
-      config.vm.box           = 'Centos-template-name'
-    end
+  # Linux machine
+  c.vm.define "linacs-1" do |config|
+    config.vm.box           = 'Centos-template-name'
   end
 end
