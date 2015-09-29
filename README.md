@@ -88,6 +88,34 @@ A simple VM definition:
     config.vm.box           = 'Centos-template-name'
   end
 ```
+## Example 2
 
+A simple webserver installation using Chef:
+```ruby
+  c.omnibus.chef_version = '12.3.0'
+  c.berkshelf.enabled = true
+  
+  # Linux machine
+  c.vm.define 'linacs-1' do |config|
+    config.vm.box           = 'Centos7-x86_64-Sbp_cis-XenServer-latest'
+    config.vm.provision :chef_zero do |chef|
+        chef.add_recipe 'apache2'
+        chef.json = { :apache => { :default_site_enabled => true } }
+    end
+  end
+```
 
+In order for this example to work, the following installations are required:
+* ChefDK: Download from https://downloads.chef.io/chef-dk/ , more instructions on https://docs.chef.io/install_dk.html
+* To install chef-client in the VM; Vagrant plugin vagrant-omnibus: Execute `vagrant plugin install vagrant-omnibus`
+* To collect the required cookbook(s); Vagrant plugin vagrant-berkshelf: Execute `vagrant plugin install vagrant-berkshelf`
+
+To instruct vagrant-berkshelf to collect the 'apache2' cookbook, a 'Berskfile' has been created
+```ruby
+source "https://supermarket.chef.io"
+
+#metadata
+
+cookbook 'apache2'
+```
 

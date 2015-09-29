@@ -19,10 +19,18 @@ Vagrant.configure("2") do |c|
     p.ssh_key               = './vagacs.key'
     p.keypair               = 'vagacs'
     p.ssh_user              = 'bootstrap'
+
   end
 
+  c.omnibus.chef_version = '12.3.0' # '11.16.4' # '12.0.0' '11.16.4' '11.16.0' # :latest
+  c.berkshelf.enabled = true
+  
   # Linux machine
-  c.vm.define "linacs-1" do |config|
+  c.vm.define 'linacs-1' do |config|
     config.vm.box           = 'Centos-template-name'
+    config.vm.provision :chef_zero do |chef|
+        chef.add_recipe 'apache2'
+        chef.json = { :apache => { :default_site_enabled => true } }
+    end
   end
 end
