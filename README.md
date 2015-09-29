@@ -39,32 +39,44 @@ The Vagrantfile specifies the credentials to use to connect (SSH) to the VM:
 * p.keypair: the name under which the key was created in Cloudstack
 * p.ssh_user: the username of the 'bootstrap' user (e.g. 'root', 'vagrant')
 
-### Step 0.3 Run bundler
-To make sure the apropriate plugin(s) is installed, a Gemfile is provided with dependencies. Use bundler to create a 'sandbox'.
-As (working) example you can run the script `prereq.sh`
+### Step 0.3 Install Vagrant-Cloudstack plugin, or use bundler
+
+On a working Vagrant installation, install the plugin 'vagrant-cloudstack':
+```bash
+vagrant plugin install vagrant-cloudstack
+```
+
+As an alternative you can work with latest development versions for plugin(s) or even Vagrant itself.
+For this you need to create a Gemfile (or use/copy the provided Gemfile) in the respective (example) directory. Adjust it to you needs.
+Execute in the example folder:
+```bash
+bundle install --path vendor/bundle --binstubs vendor/bin
+```
+NOTE to actually use the created bundle, pre-pend all vagrant commands with `bundle exec`, e.g. `bundle exec vagrant status`
+
 
 ## Example 0
 If you have executed previous steps/edits, you should be able to do the following from within the example directories:
 
 List (possibly) available machines:
 ```bash
-$ bundle exec vagrant status
+$ # vagrant status
 ```
 Running this will already verify your Cloudstack credentials and connection information.
 
 Start a machine:
 ```bash
-$ bundle exec vagrant up linacs-1
+$ # vagrant up linacs-1
 ```
 
 SSH into the VM:
 ```bash
-$ bundle exec vagrant ssh linacs-1
+$ # vagrant ssh linacs-1
 ```
 
 Destroy the VM:
 ```bash
-$ bundle exec vagrant destroy linacs-1
+$ # vagrant destroy linacs-1
 ```
 
 ## Example 1

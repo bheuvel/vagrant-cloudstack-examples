@@ -13,3 +13,5 @@ vendor/*
 */vendor/*
 
 */Gemfile.lock
+
+*.key
