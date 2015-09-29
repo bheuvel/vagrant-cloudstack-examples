@@ -81,7 +81,7 @@ $ # vagrant destroy linacs-1
 
 ## Example 1
 
-A simple VM definition:
+A simple Vagrantfile VM definition:
 ```ruby
   # Linux machine
   c.vm.define "linacs-1" do |config|
@@ -90,7 +90,7 @@ A simple VM definition:
 ```
 ## Example 2
 
-A simple webserver installation using Chef:
+A simple webserver installation using Chef (Vagrantfile):
 ```ruby
   c.omnibus.chef_version = '12.3.0'
   c.berkshelf.enabled = true
@@ -118,4 +118,31 @@ source "https://supermarket.chef.io"
 
 cookbook 'apache2'
 ```
+
+## Example 3
+
+Continuing on example 2, with portforwarding to test the webserver.
+
+In the Vagrantfile the section c.vm.define extended:
+```ruby
+    config.vm.provision "shell", privileged: true, inline: 'echo Hello > /var/www/html/index.html'
+
+    config.vm.provider :cloudstack do |p|
+      p.port_forwarding_rules = [
+        { :ipaddress => "#{ENV["PUBLIC_SOURCE_NAT_IP"]}", :protocol => "tcp", :publicport => 55550, :privateport  => 80, :openfirewall => false }
+      ]
+      p.firewall_rules = [
+        { :ipaddress => "#{ENV["PUBLIC_SOURCE_NAT_IP"]}", :protocol => "tcp", :startport => 55550, :endport => 55550 }
+      ]
+    end
+```
+
+The `config.vm.provision "shell"` has been added to create an HTML file for Apache2 to publish
+
+The `config.vm.provider :cloudstack do |p|` has been added at VM level to provide a portforward and firewall rule for this specific VM
+
+If the run completed succesfully, it should provide a webpage, e.g. `wget -qO- http://85.222.237.60:55550`
+
+
+
 
