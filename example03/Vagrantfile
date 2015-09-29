@@ -34,7 +34,7 @@ Vagrant.configure("2") do |c|
         chef.json = { :apache => { :default_site_enabled => true } }
     end
     
-    config.vm.provision "shell", privileged: true, upload_path: '/home/bootstrap/exec.sh', inline: 'echo Hello, impressive webpage says hi ;-) > /var/www/html/index.html'
+    config.vm.provision "shell", privileged: true, upload_path: '/home/bootstrap/exec.sh', inline: 'echo "Impressive webpage says hi ;-)" > /var/www/html/index.html'
 
     config.vm.provider :cloudstack do |p|
       p.port_forwarding_rules = [
