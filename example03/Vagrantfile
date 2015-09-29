@@ -1,0 +1,48 @@
+Vagrant.configure("2") do |c|
+  #
+  # Configure CloudStack
+  #
+  c.vm.provider :cloudstack do |p|
+    p.api_key               = ENV["CLOUDSTACK_API_KEY"]     || "__Your_CloudStack_API_KEY_Here_if_not_set_as_environment_variable__"
+    p.secret_key            = ENV["CLOUDSTACK_SECRET_KEY"]  || "__Your_CloudStack_SECRET_KEY_Here_if_not_set_as_environment_variable__"
+    p.host                  = ENV["CLOUDSTACK_HOST"]        || "__Your_CloudStackHost_Here__"
+    p.zone_name             = ENV["ZONE_NAME"]              || "__Your_CloudStack_Zone_Name_Here__"
+    p.service_offering_name = ENV["SERVICE_OFFERING_NAME"]  || "__Your_CloudStack_Service_Offering_Here__"
+    p.network_name          = ENV["NETWORK_NAME"]           || "__Your_CloudStack_Network_Name_Here__"
+    p.pf_ip_address         = ENV["PUBLIC_SOURCE_NAT_IP"]   || "__Your_Public_IP_Of_Above_CloudStack_Network_Name_Here__"
+    p.network_type          = "Advanced"
+    p.pf_open_firewall      = true
+    p.pf_trusted_networks   = "xxx.xxx.xxx.xxx/32,yyy.yyy.yyy.yyy/24"
+        
+    p.expunge_on_destroy    = true
+
+    p.ssh_key               = './vagacs.key'
+    p.keypair               = 'vagacs'
+    p.ssh_user              = 'bootstrap'
+
+  end
+
+  c.omnibus.chef_version = '12.3.0' # '11.16.4' # '12.0.0' '11.16.4' '11.16.0' # :latest
+  c.berkshelf.enabled = true
+  
+  # Linux machine
+  c.vm.define 'linacs-1' do |config|
+    config.vm.box           = 'Centos-template-name'
+
+    config.vm.provision :chef_zero do |chef|
+        chef.add_recipe 'apache2'
+        chef.json = { :apache => { :default_site_enabled => true } }
+    end
+    
+    config.vm.provision "shell", privileged: true, inline: 'echo Hello > /var/www/html/index.html'
+
+    config.vm.provider :cloudstack do |p|
+      p.port_forwarding_rules = [
+        { :ipaddress => "#{ENV["PUBLIC_SOURCE_NAT_IP"]}", :protocol => "tcp", :publicport => 55550, :privateport  => 80, :openfirewall => false }
+      ]
+      p.firewall_rules = [
+        { :ipaddress => "#{ENV["PUBLIC_SOURCE_NAT_IP"]}", :protocol => "tcp", :startport => 55550, :endport => 55550 }
+      ]
+    end
+  end
+end
