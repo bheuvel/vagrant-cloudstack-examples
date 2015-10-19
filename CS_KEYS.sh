@@ -6,11 +6,5 @@ export PUBLIC_SOURCE_NAT_IP=
 export NETWORK_NAME=
 export SERVICE_OFFERING_NAME=
 export ZONE_NAME=
-
-
-
-
-
-
-
-
+export LINUX_TEMPLATE_NAME=
+export WINDOWS_TEMPLATE_NAME=

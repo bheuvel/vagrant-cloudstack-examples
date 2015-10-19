@@ -1,4 +1,7 @@
 Vagrant.configure("2") do |c|
+  # Disable the default Synced_Folder, or else SMB plugin WILL CREATE LOCAl SHARES!!!!
+  c.vm.synced_folder ".", "/vagrant", disabled: true, type: 'rsync' # if Vagrant::Util::Platform.windows?
+
   #
   # Configure CloudStack
   #
@@ -27,7 +30,7 @@ Vagrant.configure("2") do |c|
   
   # Linux machine
   c.vm.define 'linacs-1' do |config|
-    config.vm.box           = 'Centos-template-name'
+    config.vm.box           = ENV['LINUX_TEMPLATE_NAME']
     config.vm.provision :chef_zero do |chef|
         chef.add_recipe 'apache2'
         chef.json = { :apache => { :default_site_enabled => true } }
